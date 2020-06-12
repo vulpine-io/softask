@@ -1,19 +1,20 @@
+-- DROP TABLE IF EXISTS users."user" CASCADE;
 CREATE TABLE IF NOT EXISTS users.user
 (
   -- Sequential user id
   user_id      BIGSERIAL PRIMARY KEY,
 
   -- User display name
-  display_name VARCHAR(64)  NOT NULL,
+  display_name VARCHAR(64) NOT NULL,
 
   -- Twofish encrypted user email
-  email        VARCHAR(128) NOT NULL UNIQUE,
+  email        BYTEA       NOT NULL UNIQUE,
 
   -- Sha256 hashed user password
-  password     (64)  NOT NULL,
+  password     BYTEA       NOT NULL,
 
   -- user creation date
-  created      TIMESTAMPTZ  NOT NULL DEFAULT now()
+  created      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS users.pw_resets
