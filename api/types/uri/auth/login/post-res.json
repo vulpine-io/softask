@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "login-auth-response",
+  "title": "Login Authentication Response",
+  "description": "Successful login response body.",
+  "type": "object",
+  "properties": {
+    "apiKey": {
+      "$ref": "../../../common/api-key.json"
+    }
+  },
+  "required": [
+    "apiKey"
+  ],
+  "additionalProperties": false
+}

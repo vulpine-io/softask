@@ -1,0 +1,192 @@
+openapi: 3.0.3
+
+info:
+  version: v0.0.0
+  title: SofTask
+  license:
+    name: MIT
+
+tags:
+  - name: auth
+    description: API authentication endpoints
+  - name: docs
+    description: API documentation endpoints
+
+paths:
+  /api:
+    description: Renders this API doc.
+    get:
+      tags:
+        - docs
+      summary: API Docs
+      responses:
+        200:
+          description: Success response
+          content:
+            text/html:
+              schema:
+                type: string
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
+  /api/types:
+    description: |
+      Expose the JSON schema definitions for the types used by this API.
+    get:
+      tags:
+        - docs
+      summary: JSON Schema Type List
+      responses:
+        200:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: types/uri/api/types/get-res.json
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
+  /api/types/{type-id}:
+    description: Shows the JSON schema for the specified type by id.
+    parameters:
+      - name: type-id
+        in: path
+        description: ID of the JSON schema type to render.
+        schema:
+          type: string
+        required: true
+        allowEmptyValue: false
+    get:
+      tags:
+        - docs
+      summary: JSON Schema Type
+      responses:
+        200:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: "http://json-schema.org/draft-07/schema#"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/404.json
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
+  /users/{user-id}:
+    get:
+      summary: User Details
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/404.json
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: Login
+      requestBody:
+        description: Login Request Payload
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required:
+                - email
+                - password
+      responses:
+        200:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: types/uri/auth/login/post-res.json
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/400.json
+        401:
+          description: Unauthorized
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+  /auth/auto:
+    post:
+      tags:
+        - auth
+      summary: Trusted Device Auth
+      requestBody:
+        description: Auth Request Payload
+        content:
+          application/json:
+            schema:
+              $ref: types/uri/auth/auto/post-req.json
+      responses:
+        200:
+          description: Success Response
+          content:
+            application/json:
+              schema:
+                $ref: types/uri/auth/auto/post-res.json
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/400.json
+        401:
+          description: Unauthorized
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-KEY

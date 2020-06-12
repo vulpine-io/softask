@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "auto-auth-payload",
+  "title": "Auto Authentication Payload",
+  "description": "Authentication body for devices that are configured as trusted.",
+  "type": "object",
+  "properties": {
+    "email": {
+      "title": "User Email Address",
+      "type": "string",
+      "format": "email"
+    },
+    "deviceId": {
+      "title": "Device Hardware ID",
+      "type": "string",
+      "minLength": 12,
+      "maxLength": 64,
+      "pattern": "^[^\\s]+$"
+    },
+    "token": {
+      "title": "Auto-Auth Token",
+      "description": "Server issued token authorizing a specific device to use auto-auth.",
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[^\\s]+$"
+    }
+  },
+  "required": [
+    "email",
+    "deviceId",
+    "token"
+  ],
+  "additionalProperties": false
+}

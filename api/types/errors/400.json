@@ -1,0 +1,87 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "error-400-body",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Error Status Type",
+      "type": "string",
+      "enum": [
+        "bad-request"
+      ]
+    },
+    "requestId": {
+      "$ref": "../common/request-id.json"
+    },
+    "message": {
+      "title": "Error Message",
+      "description": "User friendly message describing the error.",
+      "type": "string"
+    },
+    "validation": {
+      "title": "Request Schema Validation Errors",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "title": "Property Path",
+            "description": "Path to the JSON property for this error set.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "examples": [
+              ["pairs", "1", "value"],
+              ["email"]
+            ]
+          },
+          "errors": {
+            "title": "Errors",
+            "description": "List of errors relating to the key pointed to by \"path\".",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "examples": [
+              ["Expected value of type string, got int."],
+              ["Value must be less than 10", "Value must be greater than 2"]
+            ]
+          }
+        },
+        "required": [
+          "errors",
+          "path"
+        ],
+        "additionalProperties": false
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "status",
+    "message",
+    "requestId"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "status": "bad-request",
+      "requestId": "tFmGc6iQQs",
+      "message": "Request body did not resemble the expected input.",
+      "validation": [
+        {
+          "path": ["email"],
+          "errors": ["Given value does not resemble a valid email address."]
+        }
+      ]
+    },
+    {
+      "status": "bad-request",
+      "requestId": "tFmGc6iQQs",
+      "message": "Request body did not resemble the expected input.",
+    }
+  ]
+}
