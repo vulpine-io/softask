@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS tasks.task CASCADE;
 CREATE TABLE IF NOT EXISTS tasks.task
 (
   task_id          BIGSERIAL PRIMARY KEY,
@@ -6,7 +7,7 @@ CREATE TABLE IF NOT EXISTS tasks.task
     REFERENCES users."user" (user_id) ON DELETE RESTRICT,
 
   task_name_id     BIGINT      NOT NULL
-    REFERENCES words.task_name (task_name_id) ON DELETE RESTRICT,
+    REFERENCES common.task_name (task_name_id) ON DELETE RESTRICT,
 
   task_description TEXT,
 
@@ -15,7 +16,8 @@ CREATE TABLE IF NOT EXISTS tasks.task
   deleted          TIMESTAMPTZ
 );
 
-CREATE TABLE IF NOT EXISTS step
+DROP TABLE IF EXISTS tasks.step;
+CREATE TABLE IF NOT EXISTS tasks.step
 (
   step_id     BIGSERIAL PRIMARY KEY,
   task_id     BIGINT      NOT NULL

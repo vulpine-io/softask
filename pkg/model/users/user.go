@@ -1,8 +1,10 @@
-package model
+package users
 
 type User interface {
 	Id() int64
 	DisplayName() string
+	Email() string
+
 }
 
 type MutableUser interface {

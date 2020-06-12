@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/francoispqt/gojay"
-	"github.com/vulpine-io/softask/pkg/model"
+	"github.com/vulpine-io/softask/pkg/model/users"
 	"io"
 )
 
@@ -11,7 +11,7 @@ const (
 	KeyUserDisplayName = "displayName"
 )
 
-func EncodeUser(w io.Writer, u model.User) error {
+func EncodeUser(w io.Writer, u users.User) error {
 	enc := gojay.NewEncoder(w)
 	defer enc.Release()
 
