@@ -1,10 +1,13 @@
 package decode
 
 import (
-	"github.com/francoispqt/gojay"
-	"github.com/vulpine-io/softask/pkg/model/users"
-	v1 "github.com/vulpine-io/softask/pkg/server/api/rest/v1"
 	"io"
+	"time"
+
+	"github.com/francoispqt/gojay"
+
+	"github.com/vulpine-io/softask/pkg/model/users"
+	"github.com/vulpine-io/softask/pkg/server/api/rest/v1/encode"
 )
 
 type dUser struct {
@@ -13,15 +16,28 @@ type dUser struct {
 
 func (d *dUser) UnmarshalJSONObject(dec *gojay.Decoder, k string) (err error) {
 	switch k {
-	case v1.KeyUserId:
+	case encode.KeyUserId:
 		var tmp int64
-		if err = dec.Int64(&tmp); err != nil {
+		if err = dec.Int64(&tmp); err == nil {
 			d.MutableUser.SetId(tmp)
 		}
-	case v1.KeyUserDisplayName:
+
+	case encode.KeyUserDisplayName:
 		var tmp string
-		if err = dec.String(&tmp); err != nil {
+		if err = dec.String(&tmp); err == nil {
 			d.MutableUser.SetDisplayName(tmp)
+		}
+
+	case encode.KeyUserEmail:
+		var tmp string
+		if err = dec.String(&tmp); err == nil {
+			d.MutableUser.SetEmail(tmp)
+		}
+
+	case encode.KeyUserCreated:
+		var tmp time.Time
+		if err = dec.Time(&tmp, time.RFC3339Nano); err == nil {
+			d.MutableUser.SetCreated(tmp)
 		}
 	}
 
