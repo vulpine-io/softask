@@ -1,0 +1,27 @@
+= Misc Development Notes
+
+== Initial Cost to Run
+
+Estimates of total yearly cost to run the service.
+
+=== Base Costs
+
+[cols="2,1,1,1,3", options="header", frame=topbot]
+|===
+| Component         | Price  | Per   | Yearly | Notes
+| Android Developer | $25    | -     | -      | One time cost
+//| IOS App           | $99    | year  | $99       | Annual fee
+|===
+
+=== AWS
+
+.Self Managed PG (Split instance)
+--
+[cols="2,1,1,1,3", options="header,footer", frame=topbot]
+|===
+| Component            | Price | Per   | Yearly   | Notes
+| Database (t3a.micro) | $5.82 | month | $69.84   | First year free. Will need to setup and manage PG manually
+| Service (t3a.nano)   | $2.22 | month | $26.64   |
+| *Total*              |       |       | *$96.48* |
+|===
+--

@@ -2,14 +2,15 @@ package crypt
 
 import (
 	"crypto/cipher"
+	"fmt"
 
 	"github.com/sirupsen/logrus"
 	"golang.org/x/crypto/twofish"
 )
 
 type Twofish interface {
-	Encrypt(val string) (string, error)
-	Decrypt(val string) (string, error)
+	Encrypt(val string) string
+	Decrypt(val string) string
 }
 
 var two Twofish
@@ -32,9 +33,7 @@ func InitTwofish(key, iv []byte) error {
 		return err
 	}
 
-	dec := cipher.NewCBCDecrypter(block, iv)
-	enc := cipher.NewCBCEncrypter(block, iv)
-	two = &tfMan{dec, enc}
+	two = &tfMan{block, iv}
 
 	return nil
 }
@@ -44,12 +43,19 @@ type tfMan struct {
 	iv []byte
 }
 
-func (t *tfMan) Encrypt(val string) (string, error) {
+func (t *tfMan) Encrypt(val string) string {
 	enc := cipher.NewCFBEncrypter(t.block, t.iv)
-	enc.XORKeyStream()
+	raw := []byte(val)
+	out := make([]byte, len(raw))
+	enc.XORKeyStream(out, raw)
+	return fmt.Sprintf("%x", out)
 }
 
-func (t *tfMan) Decrypt(val string) (string, error) {
-	panic("implement me")
+func (t *tfMan) Decrypt(val string) string {
+	dec := cipher.NewCFBDecrypter(t.block, t.iv)
+	raw := []byte(val)
+	out := make([]byte, len(raw))
+	dec.XORKeyStream(out, raw)
+	return fmt.Sprintf()
 }
 

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users.user
   email        VARCHAR(128) NOT NULL UNIQUE,
 
   -- Sha256 hashed user password
-  password     VARCHAR(64)  NOT NULL,
+  password     (64)  NOT NULL,
 
   -- user creation date
   created      TIMESTAMPTZ  NOT NULL DEFAULT now()
