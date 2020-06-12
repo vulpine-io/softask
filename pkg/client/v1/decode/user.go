@@ -48,7 +48,7 @@ func (d *dUser) NKeys() int {
 	return 2
 }
 
-func DecodeUser(r io.Reader) (users.User, error) {
+func DecodeFullUser(r io.Reader) (users.User, error) {
 	dec := gojay.NewDecoder(r)
 	defer dec.Release()
 
