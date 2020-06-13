@@ -1,7 +1,7 @@
 openapi: 3.0.3
 
 info:
-  version: v1.0
+  version: v1.0.0
   title: SofTask
   license:
     name: MIT
@@ -97,8 +97,7 @@ paths:
 
   /auth/login:
     post:
-      tags:
-        - Authentication
+      operationId: login
       summary: Login
       description: |
         Log a user in using their email address and password.
@@ -106,6 +105,8 @@ paths:
         On success this endpoint will return an API key token which can be used
         as the value of the X-API-KEY header to access resources requiring
         a logged in user.
+      tags:
+        - Authentication
       requestBody:
         description: Login Request Payload
         content:
@@ -128,8 +129,7 @@ paths:
 
   /auth/logout:
     post:
-      tags:
-        - Authentication
+      operationId: logout
       summary: Logout
       description: |
         Expires the user session.
@@ -138,6 +138,10 @@ paths:
         is no longer valid.  Continued usage of an expired token will result in
         401s from any endpoint requiring a logged in user (the same behavior as
         if the X-API-KEY header was omitted).
+      tags:
+        - Authentication
+      security:
+        - ApiKeyAuth: []
       responses:
         204:
           $ref: '#/components/responses/204'
@@ -148,8 +152,7 @@ paths:
 
   /auth/auto:
     post:
-      tags:
-        - Authentication
+      operationId: autoAuth
       summary: Trusted Device Auth
       description: |
         Create a user session for a trusted device.
@@ -157,6 +160,8 @@ paths:
         On success this endpoint will return an API key token which can be used
         as the value of the X-API-KEY header to access resources requiring
         a logged in user.
+      tags:
+        - Authentication
       requestBody:
         description: Auth Request Payload
         content:
@@ -179,6 +184,7 @@ paths:
 
   /devices:
     get:
+      operationId: getDeviceList
       summary: List Trusted Devices
       tags:
         - Devices
@@ -192,6 +198,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
     post:
+      operationId: addDevice
       summary: Add Trusted Device
       description: |
         Mark the device described by the given payload as "trusted".
@@ -224,6 +231,7 @@ paths:
 
   /devices/{device-id}:
     delete:
+      operationId: deleteDevice
       summary: Remove Trusted Device
       description: |
         Remove a device's trust token from the service.
@@ -250,9 +258,10 @@ paths:
 
   /tasks:
     post:
+      operationId: getTaskList
+      summary: Create a Task
       tags:
         - Task Management
-      summary: Create a Task
       security:
         - ApiKeyAuth: []
       responses:
@@ -267,9 +276,10 @@ paths:
 
   /tasks/{task-id}:
     get:
+      operationId: getTask
+      summary: Task Details
       tags:
         - Task Management
-      summary: Task Details
       security:
         - ApiKeyAuth: []
       responses:
@@ -282,6 +292,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
     put:
+      operationId: updateTask
       summary: Update Task
       tags:
         - Task Management
@@ -299,6 +310,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
     delete:
+      operationId: deleteTask
       summary: Delete Task
       tags:
         - Task Management
@@ -316,9 +328,10 @@ paths:
 
   /tasks/assigned:
     get:
+      operationId: getAssignedTaskList
+      summary: List Assigned Tasks
       tags:
         - Task Management
-      summary: List Assigned Tasks
       security:
         - ApiKeyAuth: []
       responses:
@@ -331,9 +344,10 @@ paths:
 
   /tasks/created:
     get:
+      operationId: getCreatedTaskList
+      summary: List Created Tasks
       tags:
         - Task Management
-      summary: List Created Tasks
       security:
         - ApiKeyAuth: []
       responses:
@@ -346,6 +360,7 @@ paths:
 
   /tasks/{task-id}/steps:
     get:
+      operationId: getStepList
       summary: List Task Steps
       tags:
         - Step Management
@@ -363,6 +378,7 @@ paths:
 
   /tasks/{task-id}/steps/{step-id}:
     get:
+      operationId: getStep
       summary: View Step Details
       tags:
         - Step Management
@@ -378,6 +394,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
     put:
+      operationId: updateStep
       summary: Update Step
       tags:
         - Step Management
@@ -395,6 +412,7 @@ paths:
         500:
           $ref: '#/components/responses/500'
     delete:
+      operationId: deleteStep
       summary: Delete Step
       tags:
         - Step Management
@@ -412,6 +430,7 @@ paths:
 
   /users/{user-id}:
     get:
+      operationId: getUser
       summary: User Details
       tags:
         - User Management
