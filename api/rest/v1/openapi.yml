@@ -8,6 +8,7 @@ info:
   contact:
     name: Elizabeth Paige Harper
     email: eph@softask.app
+  description: REST API backing the SofTask mobile app and website.
 
 servers:
   - url: https://softask.app/api/v1
@@ -40,6 +41,8 @@ paths:
             text/html:
               schema:
                 type: string
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -65,6 +68,8 @@ paths:
               operationId: getApiTypeById
               parameters:
                 type-id: $response.body#/0/id
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -92,6 +97,8 @@ paths:
                 $ref: "http://json-schema.org/draft-07/schema#"
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -103,7 +110,7 @@ paths:
         Log a user in using their email address and password.
 
         On success this endpoint will return an API key token which can be used
-        as the value of the X-API-KEY header to access resources requiring
+        as the value of the X-Api-Key header to access resources requiring
         a logged in user.
       tags:
         - Authentication
@@ -124,6 +131,8 @@ paths:
           $ref: '#/components/responses/400'
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -134,10 +143,10 @@ paths:
       description: |
         Expires the user session.
 
-        Clients should also discontinue use of the X-API-KEY header as the value
+        Clients should also discontinue use of the X-Api-Key header as the value
         is no longer valid.  Continued usage of an expired token will result in
         401s from any endpoint requiring a logged in user (the same behavior as
-        if the X-API-KEY header was omitted).
+        if the X-Api-Key header was omitted).
       tags:
         - Authentication
       security:
@@ -158,7 +167,7 @@ paths:
         Create a user session for a trusted device.
 
         On success this endpoint will return an API key token which can be used
-        as the value of the X-API-KEY header to access resources requiring
+        as the value of the X-Api-Key header to access resources requiring
         a logged in user.
       tags:
         - Authentication
@@ -179,6 +188,8 @@ paths:
           $ref: '#/components/responses/400'
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -195,6 +206,8 @@ paths:
           description: Success Response
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
     post:
@@ -226,6 +239,8 @@ paths:
           $ref: '#/components/responses/400'
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -271,6 +286,8 @@ paths:
           $ref: '#/components/responses/400'
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -289,6 +306,8 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
     put:
@@ -307,6 +326,8 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
     delete:
@@ -339,6 +360,8 @@ paths:
           description: Success Response
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -355,6 +378,8 @@ paths:
           description: Success Response
         401:
           $ref: '#/components/responses/401'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -373,6 +398,8 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -391,6 +418,8 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
     put:
@@ -409,6 +438,8 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
     delete:
@@ -425,6 +456,22 @@ paths:
           $ref: '#/components/responses/401'
         404:
           $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /users:
+    post:
+      operationId: createUser
+      summary: Create User
+      tags:
+        - User Management
+      responses:
+        200:
+          description: Success Response
+        400:
+          $ref: '#/components/responses/400'
+        429:
+          $ref: '#/components/responses/429'
         500:
           $ref: '#/components/responses/500'
 
@@ -445,14 +492,49 @@ paths:
           $ref: '#/components/responses/404'
         500:
           $ref: '#/components/responses/500'
-
+    put:
+      operationId: updateUser
+      summary: Update User
+      tags:
+        - User Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        429:
+          $ref: '#/components/responses/429'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      operationId: deleteUser
+      summary: Delete User Account
+      tags:
+        - User Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
 
 components:
   securitySchemes:
     ApiKeyAuth:
       type: apiKey
       in: header
-      name: X-API-KEY
+      name: X-Api-Key
       description: |
         API Key header value provided from service after logging in.
   responses:
@@ -479,6 +561,12 @@ components:
         application/json:
           schema:
             $ref: types/errors/404.json
+    429:
+      description: Rate Limited
+      content:
+        application/json:
+          schema:
+            $ref: types/errors/429.json
     500:
       description: Internal Server Error
       content:

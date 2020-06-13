@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "error-404-body",
+  "type": "object",
+  "properties": {
+    "status": {
+      "title": "Error Status Type",
+      "type": "string",
+      "enum": [
+        "rate-limited"
+      ]
+    },
+    "requestId": {
+      "$ref": "../common/request-id.json"
+    },
+    "message": {
+      "title": "Error Message",
+      "description": "User friendly message describing the error.",
+      "type": "string"
+    }
+  },
+  "required": [
+    "status",
+    "message",
+    "requestId"
+  ],
+  "additionalProperties": false,
+  "examples": [
+    {
+      "status": "rate-limited",
+      "requestId": "tFmGc6iQQs",
+      "message": "Too many requests.  Please slow down."
+    }
+  ]
+}
