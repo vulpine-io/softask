@@ -237,6 +237,27 @@ paths:
               schema:
                 $ref: types/errors/500.json
 
+  /tasks:
+    post:
+      summary: Create a Task
+      responses:
+        200:
+          description: Success Response
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/400.json
+        401:
+          description: Unauthorized
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
   /tasks/assigned:
     get:
       summary: List Assigned Tasks
@@ -275,6 +296,12 @@ paths:
           description: Success Response
         401:
           description: Unauthorized
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/404.json
         500:
           description: Internal Server Error
           content:
@@ -285,6 +312,24 @@ paths:
   /tasks/{task-id}/steps:
     get:
       summary: Step List
+      responses:
+        200:
+          description: Success Response
+        401:
+          description: Unauthorized
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/404.json
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: types/errors/500.json
+
 
 components:
   securitySchemes:

@@ -25,3 +25,9 @@ Estimates of total yearly cost to run the service.
 | *Total*              |       |       | *$96.48* |
 |===
 --
+
+== Non-Dev ToDos
+
+. Privacy Policy
+. Terms of Service
+. Logo (Maybe https://canva.com[Canva]?)
