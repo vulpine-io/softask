@@ -7,7 +7,7 @@ import (
 	"github.com/francoispqt/gojay"
 
 	"github.com/vulpine-io/softask/pkg/model/users"
-	"github.com/vulpine-io/softask/pkg/server/api/rest/v1/encode"
+	"github.com/vulpine-io/softask/pkg/server/api/v1/encode"
 )
 
 type dUser struct {
