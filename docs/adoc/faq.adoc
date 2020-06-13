@@ -1,0 +1,12 @@
+= FAQ
+
+Why do you want my email address?::
+
+User email addresses are used solely for password reset requests and important
+account/service notifications.  This app is intended to assist in reducing
+stress and spamming users or selling their info goes against that goal.
++
+Your email address will never be shared with anyone.
++
+Additionally, user email addresses are encrypted in storage and will not be
+readable to outsiders in the event of a database breach.
