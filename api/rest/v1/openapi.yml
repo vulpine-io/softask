@@ -17,13 +17,19 @@ tags:
     description: API authentication endpoints
   - name: Documentation
     description: API documentation endpoints
-  - name: Tasks
+  - name: Task Management
     description: Task management endpoints
+  - name: Step Management
+    description: Task step management endpoints
+  - name: User Management
+    description: User account management endpoints
+  - name: Devices
 
 paths:
   /:
-    description: Renders this API doc.
     get:
+      description: Renders this API doc.
+      operationId: getApiDocs
       tags:
         - Documentation
       summary: API Docs
@@ -35,19 +41,18 @@ paths:
               schema:
                 type: string
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /types:
-    description: |
-      Expose the JSON schema definitions for the types used by this API.
     get:
+      operationId: getApiTypeList
       tags:
         - Documentation
       summary: JSON Schema Type List
+      description: |
+        Expose the JSON schema definitions for the types used by this API as an
+        array of objects containing the type ID value as well as a link to the
+        type definition in the API.
       responses:
         200:
           description: Success Response
@@ -55,15 +60,15 @@ paths:
             application/json:
               schema:
                 $ref: types/uri/api/types/get-res.json
+          links:
+            address:
+              operationId: getApiTypeById
+              parameters:
+                type-id: $response.body#/0/id
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /types/{type-id}:
-    description: Shows the JSON schema for the specified type by id.
     parameters:
       - name: type-id
         in: path
@@ -73,9 +78,11 @@ paths:
         required: true
         allowEmptyValue: false
     get:
+      operationId: getApiTypeById
       tags:
         - Documentation
       summary: JSON Schema Type
+      description: Shows the JSON schema for the specified type by id.
       responses:
         200:
           description: Success Response
@@ -84,37 +91,27 @@ paths:
               schema:
                 $ref: "http://json-schema.org/draft-07/schema#"
         404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/404.json
+          $ref: '#/components/responses/404'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /auth/login:
     post:
       tags:
         - Authentication
       summary: Login
+      description: |
+        Log a user in using their email address and password.
+
+        On success this endpoint will return an API key token which can be used
+        as the value of the X-API-KEY header to access resources requiring
+        a logged in user.
       requestBody:
         description: Login Request Payload
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-              required:
-                - email
-                - password
+              $ref: types/uri/auth/login/post-req.json
       responses:
         200:
           description: Success Response
@@ -123,42 +120,43 @@ paths:
               schema:
                 $ref: types/uri/auth/login/post-res.json
         400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/400.json
+          $ref: '#/components/responses/400'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /auth/logout:
     post:
       tags:
         - Authentication
       summary: Logout
+      description: |
+        Expires the user session.
+
+        Clients should also discontinue use of the X-API-KEY header as the value
+        is no longer valid.  Continued usage of an expired token will result in
+        401s from any endpoint requiring a logged in user (the same behavior as
+        if the X-API-KEY header was omitted).
       responses:
         204:
-          description: Success Response
+          $ref: '#/components/responses/204'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /auth/auto:
     post:
       tags:
         - Authentication
       summary: Trusted Device Auth
+      description: |
+        Create a user session for a trusted device.
+
+        On success this endpoint will return an API key token which can be used
+        as the value of the X-API-KEY header to access resources requiring
+        a logged in user.
       requestBody:
         description: Auth Request Payload
         content:
@@ -173,25 +171,43 @@ paths:
               schema:
                 $ref: types/uri/auth/auto/post-res.json
         400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/400.json
+          $ref: '#/components/responses/400'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
-  /auth/device:
+  /devices:
+    get:
+      summary: List Trusted Devices
+      tags:
+        - Devices
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        401:
+          $ref: '#/components/responses/401'
+        500:
+          $ref: '#/components/responses/500'
     post:
+      summary: Add Trusted Device
+      description: |
+        Mark the device described by the given payload as "trusted".
+
+        On success this endpoint will return, in it's response body, a 64 digit
+        token that will be associated with the user and device hardware id.
+
+        Future logins can utilize this token in combination with the user id
+        and device hardware ID to auto-auth and create a session using the
+        `/auth/auto` endpoint.  This allows devices to authenticate behind the
+        scenes for a user without having to store the user's credentials.
       tags:
         - Authentication
-      summary: Trust A Device
+        - Devices
+      security:
+        - ApiKeyAuth: []
       responses:
         200:
           description: Success Response
@@ -200,135 +216,216 @@ paths:
               schema:
                 $ref: types/uri/auth/auto/post-res.json
         400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/400.json
+          $ref: '#/components/responses/400'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
-  /users/{user-id}:
+  /devices/{device-id}:
+    delete:
+      summary: Remove Trusted Device
+      description: |
+        Remove a device's trust token from the service.
+
+        On success this endpoint will have removed any trust records for the
+        device with the ID `{device-id}` for the current user.  A device is
+        advised to remove it's own stored token after this action as it will
+        no longer be valid in use with the `/auth/auto` endpoint.
+
+        If the hardware id `{device-id}` is not known, is not attached to the
+        logged in user, or is not trusted, this endpoint will return a 404.
+      tags:
+        - Authentication
+        - Devices
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /tasks:
+    post:
+      tags:
+        - Task Management
+      summary: Create a Task
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        500:
+          $ref: '#/components/responses/500'
+
+  /tasks/{task-id}:
     get:
-      summary: User Details
+      tags:
+        - Task Management
+      summary: Task Details
       security:
         - ApiKeyAuth: []
       responses:
         200:
           description: Success Response
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/404.json
+          $ref: '#/components/responses/404'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
-
-  /tasks:
-    post:
-      summary: Create a Task
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update Task
+      tags:
+        - Task Management
+      security:
+        - ApiKeyAuth: []
       responses:
-        200:
-          description: Success Response
+        204:
+          $ref: '#/components/responses/204'
         400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/400.json
+          $ref: '#/components/responses/400'
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
+    delete:
+      summary: Delete Task
+      tags:
+        - Task Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
 
   /tasks/assigned:
     get:
+      tags:
+        - Task Management
       summary: List Assigned Tasks
+      security:
+        - ApiKeyAuth: []
       responses:
         200:
           description: Success Response
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /tasks/created:
     get:
+      tags:
+        - Task Management
       summary: List Created Tasks
+      security:
+        - ApiKeyAuth: []
       responses:
         200:
           description: Success Response
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
-
-  /tasks/{task-id}:
-    get:
-      summary: Task Details
-      responses:
-        200:
-          description: Success Response
-        401:
-          description: Unauthorized
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/404.json
-        500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
 
   /tasks/{task-id}/steps:
     get:
-      summary: Step List
+      summary: List Task Steps
+      tags:
+        - Step Management
+      security:
+        - ApiKeyAuth: []
       responses:
         200:
           description: Success Response
         401:
-          description: Unauthorized
+          $ref: '#/components/responses/401'
         404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/404.json
+          $ref: '#/components/responses/404'
         500:
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: types/errors/500.json
+          $ref: '#/components/responses/500'
+
+  /tasks/{task-id}/steps/{step-id}:
+    get:
+      summary: View Step Details
+      tags:
+        - Step Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    put:
+      summary: Update Step
+      tags:
+        - Step Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      summary: Delete Step
+      tags:
+        - Step Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /users/{user-id}:
+    get:
+      summary: User Details
+      tags:
+        - User Management
+      security:
+        - ApiKeyAuth: []
+      responses:
+        200:
+          description: Success Response
+        401:
+          $ref: '#/components/responses/401'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
 
 
 components:
@@ -337,3 +434,35 @@ components:
       type: apiKey
       in: header
       name: X-API-KEY
+      description: |
+        API Key header value provided from service after logging in.
+  responses:
+    204:
+      description: Success (No Content)
+      content:
+        "*/*":
+          schema: {}
+    400:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            $ref: types/errors/400.json
+    401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: types/errors/401.json
+    404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            $ref: types/errors/404.json
+    500:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: types/errors/500.json

@@ -6,5 +6,8 @@
   "type": "string",
   "minLength": 32,
   "maxLength": 32,
-  "pattern": "^[^\\s]+$"
+  "pattern": "^[^\\s]+$",
+  "examples": [
+    "7c230127294e47598054e881019dba67"
+  ]
 }

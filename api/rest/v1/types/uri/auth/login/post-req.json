@@ -20,5 +20,9 @@
     "email",
     "password"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "example": {
+    "email": "foobar@softask.app",
+    "password": "N4hMGU*Byr77@m2!"
+  }
 }

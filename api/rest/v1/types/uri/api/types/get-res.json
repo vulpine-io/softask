@@ -23,5 +23,9 @@
     ],
     "additionalProperties": false
   },
-  "minItems": 1
+  "minItems": 1,
+  "example": [{
+    "id": "api-type-list",
+    "link": "https://softask.app/api/v1/types/api-type-list"
+  }]
 }

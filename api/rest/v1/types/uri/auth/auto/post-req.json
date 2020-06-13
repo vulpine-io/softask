@@ -31,5 +31,10 @@
     "deviceId",
     "token"
   ],
-  "additionalProperties": false
+  "additionalProperties": false,
+  "example": {
+    "email": "someuser@somesite.com",
+    "deviceId": "",
+    "token": "87a8999b6a7b43f6b02ebb6db45013b056b022a6b06c4638a7bfcf894d3a9d73"
+  }
 }
